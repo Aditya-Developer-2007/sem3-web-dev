@@ -17,11 +17,31 @@ const server=http.createServer((req,res)=>{
             res.write('<h1>About Page</h1>');
             res.end('Here is your about page');
         }
-        else if(req.url==='/users'){
+        else if(req.url==='/users' && req.method==='GET'){
             res.writeHead(200,{'content-type':'application/json'});
             res.end(JSON.stringify(users));
         }
-
+        else if(req.url==='/users/count' && req.method==='GET'){
+            res.writeHead(200,{'content-type':'application/json'});
+            const response={
+                success:true,
+                count:users.length
+            }
+            res.end(JSON.stringify(response));
+        }
+        else if(req.url==='/users' && req.method==='POST'){
+            let body='';
+            req.on('data',(chunk)=>{
+                body+=chunk;
+            });
+            req.on('end',()=>{
+                const user=JSON.parse(body);
+                users.push(user);
+                res.writeHead(201,{'content-type':'application/json'});
+                res.write(JSON.stringify(user));
+                res.end();
+            });
+        }
         else{
             res.writeHead(404,{'content-type':'text/html'});
             res.write('<h1>wrong call</h1>');
