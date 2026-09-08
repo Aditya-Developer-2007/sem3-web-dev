@@ -14,6 +14,25 @@ const getProductById = (req, res) => {
     res.json(result);
 }
 
+const searchProducts = (req, res) => {
+    const { name, minPrice, maxPrice } = req.query;
+    let filteredProducts = products;
+
+    if (name) {
+        filteredProducts = filteredProducts.filter(product => product.name.includes(name));
+    }
+
+    if (minPrice !== undefined) {
+        filteredProducts = filteredProducts.filter(product => product.price >= parseFloat(minPrice));
+    }
+
+    if (maxPrice !== undefined) {
+        filteredProducts = filteredProducts.filter(product => product.price <= parseFloat(maxPrice));
+    }
+
+    res.json(filteredProducts);
+}
+
 const createProduct = (req, res) => {
     const product=req.body;
     products.push({ id: products.length + 1, ...product });
@@ -45,6 +64,7 @@ const deleteProduct = (req, res) => {
 module.exports = {
     getProducts,
     getProductById,
+    searchProducts,
     createProduct,
     updateProduct,
     deleteProduct
